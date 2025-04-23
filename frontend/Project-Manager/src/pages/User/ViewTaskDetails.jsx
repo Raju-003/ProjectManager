@@ -1,26 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import moment from 'moment';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
 import DashboardLayout from '../../components/layouts/DashboardLayout'; 
-import AvatarGroup from '../../components/AvatarGroup';
+
 
 const ViewTaskDetails = () => {
   const { id } = useParams();
   const [task, setTask] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
-
-  const getStatusTagColor = (status) => {
-    switch (status) {
-      case 'In Progress':
-        return 'text-cyan-500 bg-cyan-50 border border-cyan-500/10';
-      case 'Completed':
-        return 'text-lime-500 bg-lime-50 border border-lime-500/20';
-      default:
-        return 'text-violet-500 bg-violet-50 border border-violet-500/10';
-    }
-  };
 
   const getTaskDetailsByID = async () => {
     try {

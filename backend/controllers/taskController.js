@@ -147,9 +147,12 @@ const updateTask = async (req, res) => {
     task.description = req.body.description || task.description;
     task.priority = req.body.priority || task.priority;
     task.dueDate = req.body.dueDate || task.dueDate;
-    task.todoChecklists = req.body.todoChecklists || task.todoChecklists;
+    if (req.body.todoChecklists) {
+      task.set('todoChecklists', req.body.todoChecklists);
+    }
     task.attachments = req.body.attachments || task.attachments;
-
+   
+     
     if (req.body.assignedTo) {
       if (!Array.isArray(req.body.assignedTo)) {
         return res
@@ -160,6 +163,8 @@ const updateTask = async (req, res) => {
     }
 
     const updatedTask = await task.save();
+    console.log("Updated checklist:", req.body.todoChecklists);
+
     res.json({
       message: 'Task updated successfully',
       task: updatedTask,

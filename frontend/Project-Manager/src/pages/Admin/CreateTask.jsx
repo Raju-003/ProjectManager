@@ -13,6 +13,7 @@ import { toast } from 'react-hot-toast';
 import moment from 'moment';
 import Modal from '../../components/layouts/Model';
 import DeleteAlert from '../../components/DeleteAlert';
+import SendAlert from './SendAlert';
 
 const CreateTask = () => {
   const location = useLocation();
@@ -33,7 +34,31 @@ const CreateTask = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
+  const [showAlertSection, setShowAlertSection] = useState(false);
 
+  const sendAlertToTeam = async (message) => {
+    try {
+      await axiosInstance.post(API_PATHS.NOTIFICATIONS.CREATE, {
+        team: taskData.assignedTo,
+        text: message,
+        task: taskId || null, // Link to task if exists
+        notiType: 'task_update',
+      });
+
+      // If using Socket.io for real-time updates
+      if (window.io) {
+        taskData.assignedTo.forEach((userId) => {
+          window.io.emit('send-notification', {
+            userId,
+            message: `Task Update: ${message}`,
+          });
+        });
+      }
+    } catch (error) {
+      console.error('Error sending alert:', error);
+      toast.error('Failed to send notification');
+    }
+  };
   const handleValueChange = (key, value) => {
     setTaskData((prevData) => ({
       ...prevData,
@@ -63,7 +88,7 @@ const CreateTask = () => {
         completed: false,
       }));
 
-       await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
+      await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
         ...taskData,
         dueDate: new Date(taskData.dueDate).toISOString(),
         todoChecklist: todolist,
@@ -102,7 +127,7 @@ const CreateTask = () => {
             ? currentTask.title
             : taskData.title?.trim(),
         dueDate: new Date(taskData.dueDate).toISOString(),
-        todoChecklist: todolist,
+        todoChecklists: todolist,
       };
 
       await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK(taskId), updatedData);
@@ -181,20 +206,23 @@ const CreateTask = () => {
   // Delete Task
   const deleteTask = async (taskId) => {
     if (!taskId) {
-      toast.error("Invalid Task ID");
+      toast.error('Invalid Task ID');
       return;
     }
     try {
       await axiosInstance.delete(API_PATHS.TASKS.DELETE_TASK(taskId));
-      toast.success("Task deleted successfully");
+      toast.success('Task deleted successfully');
       setOpenDeleteAlert(false);
-      navigate("/admin/tasks"); // Adjust the route if needed
+      navigate('/admin/tasks'); // Adjust the route if needed
     } catch (error) {
-      console.error("Error deleting task:", error.response?.data?.message || error.message);
-      toast.error(error.response?.data?.message || "Failed to delete the task");
+      console.error(
+        'Error deleting task:',
+        error.response?.data?.message || error.message
+      );
+      toast.error(error.response?.data?.message || 'Failed to delete the task');
     }
   };
-  
+
   useEffect(() => {
     if (taskId) {
       getTaskDetailsByID(taskId);
@@ -318,6 +346,23 @@ const CreateTask = () => {
           </div>
         </div>
       </div>
+      {taskData.assignedTo.length > 0 && (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setShowAlertSection(!showAlertSection)}
+            className="text-sm text-blue-500 hover:text-blue-700"
+          >
+            {showAlertSection
+              ? 'Hide Notification'
+              : 'Send Notification to Team'}
+          </button>
+
+          {showAlertSection && (
+            <SendAlert users={taskData.assignedTo} onSend={sendAlertToTeam} />
+          )}
+        </div>
+      )}
       <Modal
         isOpen={openDeleteAlert}
         onClose={() => setOpenDeleteAlert(false)}

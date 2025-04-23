@@ -19,11 +19,10 @@ router.get('/dashboard', protect, getDashboardData);
 router.get('/user-dashboard', protect, getUserDashboardData);
 
 // Task CRUD Routes
-router.route('/')
-  .get(protect, getTasks)
-  .post(protect, createTask);
+router.route('/').get(protect, getTasks).post(protect, createTask);
 
-router.route('/:id')
+router
+  .route('/:id')
   .get(protect, getTaskById)
   .put(protect, updateTask)
   .delete(protect, deleteTask);

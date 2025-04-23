@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SIDE_MENU_DATA, SIDE_MENU_USER_DATA } from '../../utils/data';
-import { UserContext } from '../../context/UserContext'; // Add this import
+import { UserContext } from '../../context/UserContext';
 
 const SideMenu = ({ activeMenu }) => {
   const { user, clearUser } = useContext(UserContext);
@@ -31,39 +31,50 @@ const SideMenu = ({ activeMenu }) => {
   }, [user]);
 
   return (
-    <div className='w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 sticky top-[61px] z-20'>
-      <div className='flex flex-col items-center mb-7 pt-5'>
-        <div className='relative'>
-        <img
-          src={user?.profileImageUrl || ""}
-          alt="Profile Image"
-          className='w-40 h-40 bg-slate-600 rounded-full object-cover'
-        />
-      </div>
-
-      {user?.role === 'admin' && (
-        <div className=' text-white text-[18px] font-medium bg-green-400 px-3 py-0.5 rounded mt-1'>
-          Admin
+    <div className="fixed top-[61px] left-0 z-20 h-[calc(100vh-61px)] w-64 border-r border-gray-200/50 bg-white flex flex-col">
+      {/* Profile Section - Non-scrollable */}
+      <div className="flex flex-col items-center pt-5 pb-4">
+        <div className=" pt-7 pb-4">
+          <img
+            src={user?.profileImageUrl || ""}
+            alt="Profile"
+            className="h-40 w-40  rounded-full bg-slate-600 object-cover"
+          />
         </div>
-      )}
 
-      <h5 className='text-gray-950 font-medium leading-6 mt-5'>{user?.name || ""}</h5>
-      <p className='text-[12px] text-gray-500'>{user?.email || ""}</p>
+        {user?.role === 'admin' && (
+          <div className="mt-1 rounded bg-primary px-3 py-0.5 text-lg font-medium text-white">
+            Admin
+          </div>
+        )}
+
+        <h5 className="mt-5 font-medium leading-6 text-gray-950">
+          {user?.name || ""}
+        </h5>
+        <p className="text-xs text-gray-500">
+          {user?.email || ""}
+        </p>
       </div>
-      {sideMenuData.map((item, index) => (
-        <button
-          key={`menu_${index}`}
-          className={`w-full flex items-center gap-4 text-[15px] ${
-            activeMenu === item.label
-              ? "text-primary bg-gradient-to-r from-blue-50/40 to-blue-100/50 border-r-2"
-              : ""
-          } py-3 px-6 mb-3 cursor-pointer`}
-          onClick={() => handleClick(item.path)}
-        >
-          <item.icon className="text-xl" />
-          {item.label}
-        </button>
-      ))}
+  
+      {/* Scrollable Menu Items */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="space-y-1 pb-4">
+          {sideMenuData.map((item, index) => (
+            <button
+              key={`menu_${index}`}
+              className={`flex w-full items-center gap-4 px-6 py-3 text-sm ${
+                activeMenu === item.label
+                  ? "border-r-2 border-primary text-primary bg-gradient-to-r from-blue-50/40 to-blue-100/50"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+              onClick={() => handleClick(item.path)}
+            >
+              <item.icon className="text-xl" />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

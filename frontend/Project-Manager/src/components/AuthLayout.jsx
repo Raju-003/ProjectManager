@@ -1,27 +1,33 @@
 import React from 'react';
-import UI_IMG from '../assets/images/auth.png';
+import { Link } from 'react-router-dom';
+
 
 const AuthLayout = ({ children }) => {
   return (
-    <div className='flex min-h-screen bg-white'>
-      {/* Content Section */}
-      <div className='w-full md:w-[60%] px-6 sm:px-12 pt-8 pb-12 overflow-y-auto'>
-        <h2 className='text-lg font-medium text-black mb-8'>Project Manager</h2>
-        {children}
+    <>
+      {/* Navigation */}
+      <div>
+        <nav className="container mx-auto py-4 px-4 flex justify-between items-center">
+          <div className="flex items-center">
+            {/* Logo Wrapper */}
+            <Link to="/">
+              <div className="h-20 w-20 mr-4 border-b-4 border-blue-500 rounded-br-3xl overflow-hidden transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+                <img
+                  src="/logo.jpg" // Correct path to the image
+                  alt="Project Vista Logo"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            </Link>
+            <h1 className="text-2xl font-bold text-gray-800">Project Vista</h1>
+          </div>
+        </nav>
       </div>
-
-      {/* Image Section */}
-      <div className='hidden md:flex w-[40%] bg-gray-50 justify-center items-center p-8'>
-        <div className='relative w-full h-full flex justify-center items-center'>
-          <img 
-            src={UI_IMG} 
-            alt="Authentication illustration" 
-            className='max-w-full max-h-[80vh] object-contain'
-            loading='lazy'
-          />
-        </div>
+      {/* Main content */}
+      <div className="flex-grow flex items-center justify-center px-4">
+        <div className="w-full max-w-md">{children}</div>
       </div>
-    </div>
+    </>
   );
 };
 

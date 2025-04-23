@@ -39,4 +39,9 @@ export const API_PATHS = {
   Image: {
     UPLOAD: 'api/auth/upload-image', // Upload an image
   },
+  NOTIFICATIONS: {
+    CREATE: '/api/notifications', // Create a notification (Admin only)
+    GET_USER_NOTIFICATIONS: '/api/notifications/user', // Get user notifications
+    MARK_AS_READ: '/api/notifications/read', // Mark notifications as read
+  },
 };

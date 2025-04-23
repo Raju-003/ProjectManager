@@ -21,6 +21,7 @@ import PrivateRoute from './routes/PrivateRoute';
 import UserProvider, { UserContext } from './context/UserContext';
 import { Toaster } from 'react-hot-toast';
 
+import Notification from './pages/User/Notification';
 import Index from './Index'; // landing page
 
 
@@ -48,6 +49,7 @@ const App = () => {
               <Route path="/user/dashboard" element={<UserDashboard />} />
               <Route path="/user/tasks" element={<MyTasks />} />
               <Route path="/user/task-details/:id" element={<ViewTaskDetails />} />
+              <Route path="/notifications" element={<Notification />} />
             </Route>
 
           </Routes>
