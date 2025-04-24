@@ -44,6 +44,14 @@ const io = new Server(httpServer, {
   },
 });
 
+
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    message: 'Backend is running',
+    api_docs: 'https://github.com/Project-Manager/backend/docs', // Optional
+    status: 'healthy'
+  });
+});
 // Store socket instances per user
 const userSockets = new Map();
 
