@@ -24,10 +24,7 @@ connectDB();
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      'https://projectvistaa.netlify.app',
-      'http://localhost:3000'
-    ],
+    origin: process.env.CLIENT_URL || '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
@@ -36,22 +33,11 @@ app.use(
 // Socket.io setup
 const io = new Server(httpServer, {
   cors: {
-    origin: [
-      'https://projectvistaa.netlify.app',
-      'http://localhost:3000'
-    ],
+    origin: process.env.CLIENT_URL || '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   },
 });
 
-
-app.get('/', (req, res) => {
-  res.status(200).json({ 
-    message: 'Backend is running',
-    api_docs: 'https://github.com/Project-Manager/backend/docs', // Optional
-    status: 'healthy'
-  });
-});
 // Store socket instances per user
 const userSockets = new Map();
 
