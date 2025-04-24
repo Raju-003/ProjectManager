@@ -79,30 +79,38 @@ const CreateTask = () => {
   };
 
   // Create Task
-  const createTask = async () => {
-    setLoading(true);
+ // Create Task
+const createTask = async () => {
+  setLoading(true);
 
-    try {
-      const todolist = taskData.todoChecklist?.map((item) => ({
+  try {
+    const prevTodoChecklist = currentTask?.todoChecklists || [];
+
+    const todolist = taskData.todoChecklist?.map((item) => {
+      const matchedTask = prevTodoChecklist.find((task) => task.text === item);
+      return {
         text: item,
-        completed: false,
-      }));
+        completed: matchedTask ? matchedTask.completed : false,
+      };
+    });
 
-      await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
-        ...taskData,
-        dueDate: new Date(taskData.dueDate).toISOString(),
-        todoChecklist: todolist,
-      });
+    await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
+      ...taskData,
+      dueDate: new Date(taskData.dueDate).toISOString(),
+      todoChecklists: todolist, 
+    });
 
-      toast.success('Task Created Successfully');
-      clearData();
-    } catch (error) {
-      console.error('Error creating task:', error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+    toast.success('Task Created Successfully');
+    clearData();
+    sendAlertToTeam(`A new task "${taskData.title}" has been created.`);
+  } catch (error) {
+    console.error('Error creating task:', error);
+    setLoading(false);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Update Task
   const updateTask = async () => {

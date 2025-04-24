@@ -22,18 +22,20 @@ connectDB();
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 // Socket.io setup
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.CLIENT_URL || '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
-  }
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  },
 });
 
 // Store socket instances per user
@@ -41,8 +43,6 @@ const userSockets = new Map();
 
 // Socket.io connection handler
 io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
-
   // Handle user joining their room
   socket.on('join-user-room', (userId) => {
     socket.join(userId);
@@ -54,14 +54,12 @@ io.on('connection', (socket) => {
   socket.on('send-notification', ({ userId, message }) => {
     io.to(userId).emit('new-notification', {
       message,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
-    console.log(`Notification sent to user ${userId}`);
   });
 
   // Handle disconnection
   socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
     // Clean up userSockets map
     for (let [userId, socketId] of userSockets.entries()) {
       if (socketId === socket.id) {
