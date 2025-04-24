@@ -7,15 +7,12 @@ const Notice = require('../models/Notifications');
 // Create a new notification (for admin to send)
 const createNotification = async (req, res) => {
   try {
-
-    console.log('--- Incoming Notification Payload ---');
-    console.log(req.body);
     const { team, text, task, notiType } = req.body;
 
     // Validate required fields
     if (!team || !team.length || !text) {
-      return res.status(400).json({ 
-        message: 'Team members and notification text are required' 
+      return res.status(400).json({
+        message: 'Team members and notification text are required',
       });
     }
 
@@ -26,7 +23,7 @@ const createNotification = async (req, res) => {
       task: task ? new mongoose.Types.ObjectId(task) : null,
       notiType: notiType || 'alert',
       isRead: [],
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     // Save to database
@@ -34,34 +31,32 @@ const createNotification = async (req, res) => {
 
     console.log('Saved Notification:', savedNotice);
 
-
     // Emit real-time notifications
     const io = req.app.get('io');
     if (io) {
       // Get list of currently connected users
-      const connectedUsers = Array.from(io.sockets.adapter.rooms.keys())
-        .filter(key => !key.startsWith('room-') && key !== io.sockets.adapter.sids);
+      const connectedUsers = Array.from(io.sockets.adapter.rooms.keys()).filter(
+        (key) => !key.startsWith('room-') && key !== io.sockets.adapter.sids
+      );
 
       // Send to both connected and disconnected users (will see when they reconnect)
-      team.forEach(userId => {
+      team.forEach((userId) => {
         const userIdStr = userId.toString();
-        
+
         // For connected users - send immediately
         if (io.sockets.adapter.rooms.has(userIdStr)) {
           io.to(userIdStr).emit('new-notification', {
             ...savedNotice.toObject(),
-            isRealTime: true
+            isRealTime: true,
           });
         }
-        
+
         // Optional: Store pending notifications for offline users
         // await User.updateOne(
         //   { _id: userId },
         //   { $push: { pendingNotifications: savedNotice._id } }
         // );
       });
-
-      console.log(`Notification broadcasted to ${team.length} team members`);
     }
 
     // Update related task if exists
@@ -75,14 +70,13 @@ const createNotification = async (req, res) => {
 
     res.status(201).json({
       ...savedNotice.toObject(),
-      message: 'Notification created and sent successfully'
+      message: 'Notification created and sent successfully',
     });
-
   } catch (error) {
     console.error('Notification creation error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Failed to create notification',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -91,9 +85,6 @@ const createNotification = async (req, res) => {
 const getUserNotifications = async (req, res) => {
   try {
     const userId = req.user._id; // Already an ObjectId from auth middleware
-
-    // Debugging logs
-    console.log(`Fetching notifications for user: ${userId}`);
 
     const notifications = await Notice.find({
       team: userId,

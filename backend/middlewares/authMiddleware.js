@@ -25,8 +25,9 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized, no token' });
     }
   } catch (error) {
-    console.error("❌ Auth error:", error.message);
-    return res.status(401).json({ message: 'Token failed', error: error.message });
+    return res
+      .status(401)
+      .json({ message: 'Token failed', error: error.message });
   }
 };
 
