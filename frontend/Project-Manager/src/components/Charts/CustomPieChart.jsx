@@ -1,13 +1,13 @@
-import React from 'react'
-import{
-    PieChart,
-    Pie,
-    Cell,
-    Tooltip,
-    ResponsiveContainer,
-    Legend,
-} from "recharts";
-import CustomTooltip from './CustomTooltip';
+import React from 'react';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
+import CustomTooltip from './CustomToolTip';
 import CustomLegend from './CustomLegend';
 
 const CustomPieChart = ({ data, colors }) => {
@@ -25,19 +25,14 @@ const CustomPieChart = ({ data, colors }) => {
           labelLine={false}
         >
           {data.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={colors[index % colors.length]}
-            />
+            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
         </Pie>
-        <Tooltip  content={<CustomTooltip/>}/>
-        <Legend  content ={<CustomLegend/>} />
+        <Tooltip content={<CustomTooltip />} />
+        <Legend content={<CustomLegend />} />
       </PieChart>
     </ResponsiveContainer>
   );
 };
 
-
-
-export default CustomPieChart
+export default CustomPieChart;
