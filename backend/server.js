@@ -24,7 +24,10 @@ connectDB();
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: [
+      'https://projectvistaa.netlify.app',
+      'http://localhost:3000'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
@@ -33,7 +36,10 @@ app.use(
 // Socket.io setup
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL || '*',
+    origin: [
+      'https://projectvistaa.netlify.app',
+      'http://localhost:3000'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   },
 });

@@ -1,5 +1,5 @@
 // src/utils/apiPaths.js
-export const BASE_URL = 'http://localhost:8000';
+export const BASE_URL = 'https://project-vista.onrender.com';
 
 //utils/apiPaths.js
 // src/utils/apiPaths.js
